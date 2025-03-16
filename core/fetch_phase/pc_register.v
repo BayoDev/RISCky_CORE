@@ -1,5 +1,5 @@
 
-module register(
+module pc_register(
     input             write_enable,
     input             clk,
     input             reset,
