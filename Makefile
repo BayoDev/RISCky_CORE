@@ -1,5 +1,5 @@
 
-TARGET_FILE := ./core/registers_handler/components/*.v ./core/registers_handler/*.v
+TARGET_FILE := ./core/fetch_phase/*.v
 DEVICE := GW2A-LV18PG256C8/I7
 BOARD := tangprimer20k
 

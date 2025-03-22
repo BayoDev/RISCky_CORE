@@ -15,4 +15,5 @@ always @(posedge clk or posedge reset) begin
         data_out <= data_in;
 end
 
+
 endmodule
