@@ -18,3 +18,4 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://hdlbits.01xz.net/wiki/Main_Page
 - https://gitea.auro.re/higepi/Projet_SETI_RISC-V/raw/branch/main/Doc/Design_and_Implementation_of_a_RISC_V_Processor_on_FPGA.pdf
 - https://v2kparse.sourceforge.net/includes.pdf
+- https://www.01signal.com/verilog-design/arithmetic/signed-wire-reg/

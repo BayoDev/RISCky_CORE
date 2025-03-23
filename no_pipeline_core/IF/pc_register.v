@@ -21,7 +21,7 @@ always @(posedge clk or posedge rst) begin
             was_rst <= 1'b0;
         end
         else 
-            data_out <= data_out + 1;
+            data_out <= data_out + 4;
     end
 
 end

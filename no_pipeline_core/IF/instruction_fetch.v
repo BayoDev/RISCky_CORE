@@ -1,4 +1,3 @@
-
 module instruction_fetch(
 
     input clk,rst,
@@ -6,11 +5,14 @@ module instruction_fetch(
     input [31:0]    branch_result,
     input           was_branch,
 
-    output reg [31:0]   instr_out
+    output reg [31:0]   instr_out,
+
+    // Propagation
+    output [31:0]       pc_propagation
 
 );
 
-wire [31:0] data_out,data_in,instr_wire_out;
+wire [31:0] instr_wire_out;
 
 reg [31:0] instr_mid_out;
 
@@ -21,15 +23,15 @@ reg [31:0] instr_mid_out;
 pc_register pc(
     .clk(clk),
     .rst(rst),
-    // .write_en(pc_write_en),
-    .data_in(data_in),
-    .data_out(data_out)
+    .write_en(was_branch),
+    .data_in(branch_result),
+    .data_out(pc_propagation)
 );
 
 instruction_memory mem(
     .clk(clk),
     .rst(rst),
-    .address(data_out),
+    .address(pc_propagation),
     .data_out(instr_wire_out)
 );
 
@@ -42,7 +44,7 @@ always @(posedge clk or posedge rst) begin
         instr_out <= instr_mid_out;
     end
 
-    $display("[IF-PHASE] PC: 0x%08h INSTR: 0x%08h",data_out,instr_out);
+    // $display("[IF-PHASE] PC: 0x%08h INSTR: 0x%08h",data_out,instr_out);
 end
 
 always @(negedge clk)begin

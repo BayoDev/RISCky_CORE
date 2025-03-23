@@ -3,24 +3,43 @@ module memory_access(
 
     input clk,rst,
 
+    // INPUT
+
     input [31:0]    ex_result,
     input           ex_zero,
+    input           is_branch_op,
+    input           mem_write,
     input           mem_read,
-    input           mem_write
 
-    // output [31:0]   
+    input [31:0]    write_data,
+
+    input           dest_reg_prog_in,
+
+    // OUTPUT
+
+    output           is_valid_branch,
+    output           dest_reg_prog_out,
+
+    output [31:0]    memory_res,original_value
 
 );
 
-// data_memory mem(
+assign is_valid_branch = is_branch_op & ex_zero;
+assign dest_reg_prog_out = dest_reg_prog_in;
+assign original_value = ex_result;
 
-//     .clk(clk),
-//     .rst(rst),
+data_memory mem(
 
-//     .address(),
-//     .data_out()
+    .clk(clk),
+    .rst(rst),
 
-// );
+    .address(ex_result),
+    .data_out(memory_res),
+
+    .data_in(write_data),
+    .write_enable(mem_write)
+
+);
 
 
 
