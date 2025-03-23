@@ -1,6 +1,6 @@
 module INSTRUCTION_FETCH(
     input       clk,
-    input       reset,
+    input       rst,
 
     input               is_branch,
     input [31:0]        branch_result,

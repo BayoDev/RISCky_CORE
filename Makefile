@@ -1,7 +1,7 @@
 
 TARGET_FILE := ./no_pipeline_core/IF/instruction_fetch.v
 
-TARGET_SIMUL:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/*
+TARGET_SIMUL:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/* ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/*
 SIMULATION_OUT:= test.sim
 
 DEVICE := GW2A-LV18PG256C8/I7
