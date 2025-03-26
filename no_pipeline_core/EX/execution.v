@@ -28,7 +28,14 @@ module execution(
 );
 
 assign second_reg_propagation = op2;
+assign zero = (res==32'b0) ? 1'b1 : 1'b0;
 
+// Decide which data is used as second operand for the ALU operation.
+// Four cases:
+//      - ALU_src is set => 
+//          - Handle immediate case ...
+//          - ...
+//      - ALU_src is not set => op2
 wire [31:0] ass_op2 = (ALU_src) ? 
                         ((sign_extended[31:25]==7'b0000001 || sign_extended[31:25]==7'b0000101) 
                         ? sign_extended[11:7] : sign_extended[31:20] )
@@ -39,16 +46,23 @@ ALU alu(
     .op2(ass_op2),
 
     .ALU_op(ALU_op),
+    .ALU_op_ext(ALU_op_ext),
     
     .res(res)
 );
 
-assign zero = (res==32'b0) ? 1'b1 : 1'b0;
+// Valid branch
+assign is_branch_out = (!is_branch_in) ? 'b0 : (
+                (ALU_op=='b0 && zero) ?  'b1:
+                (ALU_op=='b1 && !zero) ? 'b1 :
+                (ALU_op=='b100 && ($signed(op1)<$signed(op2))) ? 'b1 :
+                (ALU_op=='b101 && ($signed(op1)>=$signed(op2))) ? 'b1 :
+                (ALU_op=='b110 && (op1<op2)) ? 'b1 :
+                (ALU_op=='b111 && (op1>=op2)) ? 'b1 : 'b0
+        );
 
-// IDK if this is right
+// Branch target
 wire signed [31:0] b_type_imm = {{20{sign_extended[31]}},sign_extended[7],sign_extended[30:25],sign_extended[11:8],1'b0};
-// wire signed [63:0] shifted = (sign_extended>>>23);
-// wire signed [31:0] half_extended = shifted[31:0];
 assign branch_result = b_type_imm + in_pc_value;
 
 endmodule
