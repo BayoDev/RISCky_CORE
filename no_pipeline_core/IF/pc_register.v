@@ -6,24 +6,16 @@ module pc_register(
     output reg [31:0]  data_out
 );
 
-reg was_rst;
-
 always @(posedge clk or posedge rst) begin
-    if(rst) begin
-        was_rst <= 1'b1;
+    if(rst)
         data_out <= 32'b0;
-    end
-    else if (write_en)
-        data_out <= data_in;
-    else begin
-        if(was_rst) begin
-            data_out <= 32'b0;
-            was_rst <= 1'b0;
-        end
-        else 
-            data_out <= data_out + 4;
-    end
+    else 
+        data_out <=  data_out + 4;
+end
 
+always @(negedge clk) begin
+    if(!rst && write_en)
+        data_out <= data_in;
 end
 
 endmodule
