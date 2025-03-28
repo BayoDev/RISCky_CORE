@@ -17,6 +17,7 @@ module execution(
     input [31:0]    in_pc_value,
 
     input           is_branch_in,
+    input signed [31:0]    imm_value,
 
     // OUTPUT
 
@@ -62,7 +63,6 @@ assign is_branch_out = (!is_branch_in) ? 'b0 : (
         );
 
 // Branch target
-wire signed [31:0] b_type_imm = {{20{sign_extended[31]}},sign_extended[7],sign_extended[30:25],sign_extended[11:8],1'b0};
-assign branch_result = b_type_imm + in_pc_value;
+assign branch_result = imm_value + in_pc_value;
 
 endmodule

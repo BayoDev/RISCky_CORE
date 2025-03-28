@@ -45,6 +45,7 @@ wire            id_is_branch_out;
 wire            id_is_write_back;
 wire            id_mem_write_out;
 wire            id_mem_read_out;
+wire [31:0]     id_imm_value_out;
 
 // EX
 
@@ -57,6 +58,7 @@ wire [6:0]      ex_alu_op_ext_in;
 wire            ex_alu_src_in;
 wire [31:0]     ex_pc_propagation_in;
 wire            ex_is_branch_in;
+wire [31:0]     ex_imm_value_in;
 
 // output
 wire [31:0]     ex_result_out;
@@ -131,6 +133,7 @@ instruction_decoding id_phase(
     .ALU_op_base(id_alu_op_base_out),
     .ALU_op_ext(id_alu_op_ext_out),
     .ALU_src(id_alu_src_out),
+    .imm_value(id_imm_value_out),
 
     .is_branch(id_is_branch_out),
     .mem_write(id_mem_write_out),
@@ -148,6 +151,7 @@ assign ex_alu_op_base_in = id_alu_op_base_out;
 assign ex_alu_op_ext_in = id_alu_op_ext_out;
 assign ex_pc_propagation_in = id_pc_propagation_out;
 assign ex_is_branch_in = id_is_branch_out;
+assign ex_imm_value_in = id_imm_value_out;
 
 execution ex_phase(
     .clk(clk),
@@ -160,6 +164,7 @@ execution ex_phase(
     .ALU_op(ex_alu_op_base_in),
     .ALU_op_ext(ex_alu_op_ext_in),
     .ALU_src(ex_alu_src_in),
+    .imm_value(ex_imm_value_in),
 
     .res(ex_result_out),
     .zero(ex_zero_out),
@@ -177,7 +182,7 @@ assign if_branch_result_in = ex_branch_result_out;
 assign mem_ex_result_in = ex_result_out;
 assign mem_ex_zero_in = ex_zero_out;
 assign mem_write_data_in = ex_second_reg_propagation_out;
-assign if_was_branch_in = mem_is_valid_branch_out;
+assign if_was_branch_in = ex_is_branch_out;
 assign mem_is_mem_write_in = id_mem_write_out;
 assign mem_is_mem_read_in = id_mem_read_out;
 assign mem_is_branch_op_in = id_is_branch_out;

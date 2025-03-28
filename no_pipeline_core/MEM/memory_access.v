@@ -24,7 +24,6 @@ module memory_access(
 
 );
 
-assign is_valid_branch = is_branch_op & ex_zero;
 assign dest_reg_prog_out = dest_reg_prog_in;
 assign original_value = ex_result;
 
