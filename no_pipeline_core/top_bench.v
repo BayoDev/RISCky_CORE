@@ -189,6 +189,9 @@ assign mem_is_branch_op_in = id_is_branch_out;
 
 
 memory_access mem_phase(
+    .clk(clk),
+    .rst(rst),
+
     .ex_result(mem_ex_result_in),
     .ex_zero(mem_ex_zero_in),
     .is_branch_op(mem_is_branch_op_in),

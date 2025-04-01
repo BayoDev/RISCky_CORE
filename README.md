@@ -19,3 +19,4 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://gitea.auro.re/higepi/Projet_SETI_RISC-V/raw/branch/main/Doc/Design_and_Implementation_of_a_RISC_V_Processor_on_FPGA.pdf
 - https://v2kparse.sourceforge.net/includes.pdf
 - https://www.01signal.com/verilog-design/arithmetic/signed-wire-reg/
+- https://cva6.readthedocs.io/en/latest/01_cva6_user/RISCV_Instructions_RV32I.html

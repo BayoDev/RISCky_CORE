@@ -1,4 +1,3 @@
-
 module instruction_memory(
 
     input clk,rst,
@@ -26,11 +25,19 @@ end
 
 // ADD/ADDI test
 
+// initial begin
+//     memory[0] = 32'h00a08093;
+//     memory[1] = 32'h01410113;
+//     memory[2] = 32'h002081b3;
+//     memory[3] = 32'hfe000ae3;
+// end
+
+// LD/ST test with offset
 initial begin
-    memory[0] = 32'h00a08093;
-    memory[1] = 32'h01410113;
-    memory[2] = 32'h002081b3;
-    memory[3] = 32'hfe000ae3;
+    memory[0] = 32'h00a00093; // addi x1, x0, 10  (Put value 10 into x1)
+    memory[1] = 32'h00400113; // addi x2, x0, 4   (Put value 4 into x2 as offset)
+    memory[2] = 32'h00112223; // sw x1, 4(x2)     (Store value of x1 into memory at address x2 + 4)
+    memory[3] = 32'h00412103; // lw x2, 4(x2)     (Load value from memory at address x2 + 4 into x2)
 end
 
 // always @(posedge clk) begin
@@ -39,5 +46,6 @@ end
 
 // I do the shifting because the memory should be byte-addressed in theory
 assign data_out = memory[address>>2];
+
 
 endmodule

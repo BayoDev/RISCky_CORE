@@ -1,5 +1,5 @@
 
-TARGET_FILE := ./no_pipeline_core/IF/instruction_fetch.v
+TARGET_FILE := ./no_pipeline_core/IF/*
 
 TARGET_SIMUL:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/* ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/*
 SIMULATION_OUT:= test.sim

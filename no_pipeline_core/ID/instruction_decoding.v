@@ -24,6 +24,7 @@ module instruction_decoding(
 
     output [31:0]       out_pc_value,
 
+
     // control data
     output [2:0]         ALU_op_base,
     output [6:0]         ALU_op_ext,
@@ -49,12 +50,14 @@ wire [4:0] rs1          = instruction     [19:15];
 wire [4:0] rs2          = instruction     [24:20];
 wire [6:0] funct7       = instruction     [31:25];
 
+
+assign is_mem_access = (opcode=='b0000011 || opcode == 'b0100011);
 assign reg_write_target = rd;
-assign reg_write = (opcode!=8'b1100011 && opcode!=8'b0100011 && opcode!=8'b1110011) ? 1'b1 : 1'b0;
+assign reg_write = (opcode!='b1100011 && opcode!='b0100011 && opcode!='b1110011) ? 1'b1 : 1'b0;
 
-assign reg_write_from_load = (opcode==8'b0000011) ? 1'b1 : 1'b0;
+assign reg_write_from_load = (opcode=='b0000011) ? 1'b1 : 1'b0;
 
-assign is_branch = (opcode == 8'b1100011)? 1'b1 : 1'b0;
+assign is_branch = (opcode == 'b1100011)? 1'b1 : 1'b0;
 
 assign sign_extended = {{32{instruction[31]}}, instruction};
 
@@ -67,15 +70,22 @@ assign is_U_format = opcode == 'b0110111;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
 assign imm_value = 
+            (is_I_format && (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? {27'b0,instruction[24:20]} :
             (is_I_format) ? {{21{instruction[31]}},instruction[31:20]} :
             (is_J_format) ? {{11{instruction[31]}},instruction[31],instruction[21:12],instruction[22],instruction[30:23],1'b0} :
             (is_S_format) ? {{20{instruction[31]}},instruction[31:25],instruction[11:7]} :
             (is_B_format) ? {{19{instruction[31]}},instruction[31],instruction[7],instruction[30:25],instruction[11:8],1'b0} :
             (is_U_format) ? {instruction[31:12],12'b0} : 32'b0;
 
-assign ALU_op_base = funct3;
-assign ALU_op_ext = funct7;
-assign ALU_src = (opcode==8'b0010011)? 1'b1: 1'b0;
+
+wire is_load_or_store = (opcode=='b0000011 || is_S_format);
+
+// In case of load/store the EX operation should alawys be adding
+assign ALU_op_base =  (!is_load_or_store) ? funct3 : 'h0;
+
+assign ALU_op_ext = (is_load_or_store) ? 'b0 :
+        (opcode == 'b0110011 || (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? funct7 : 'b0;
+assign ALU_src = (opcode=='b0010011 || opcode=='b0000011 || opcode=='b0100011)? 1'b1: 1'b0;
 
 registers_controller reg_ctr(
     .src_one(rs1),
@@ -88,5 +98,8 @@ registers_controller reg_ctr(
     .out_one(first_reg),
     .out_two(second_reg)
 );
+
+assign mem_read  = opcode == 'b0000011;
+assign mem_write = opcode == 'b0100011;
 
 endmodule

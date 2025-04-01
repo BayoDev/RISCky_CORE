@@ -1,4 +1,3 @@
-
 module memory_access(
 
     input clk,rst,
@@ -27,6 +26,18 @@ module memory_access(
 assign dest_reg_prog_out = dest_reg_prog_in;
 assign original_value = ex_result;
 
+// Logging for memory operations
+always @(posedge clk) begin
+    if (mem_write) begin
+        $display("Memory Write: Address = %h, Data = %h", ex_result, write_data);
+    end
+    if (mem_read) begin
+        $display("Memory Read: Address = %h, Data = %h", ex_result, memory_res);
+    end
+end
+
+// TODO: propagate content of 2nd register to use in store operations
+
 data_memory mem(
 
     .clk(clk),
@@ -39,7 +50,5 @@ data_memory mem(
     .write_enable(mem_write)
 
 );
-
-
 
 endmodule
