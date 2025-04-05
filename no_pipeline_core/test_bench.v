@@ -8,7 +8,7 @@ wire signed [31:0] alu_res;
 reg [2:0] alu_in_op;
 reg [6:0] alu_op_ext;
 
-ALU alu_mod(
+RISCV_ALU alu_mod(
     .op1(alu_op1),
     .op2(alu_op2),
     

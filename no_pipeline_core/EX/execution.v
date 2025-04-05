@@ -61,7 +61,7 @@ module execution(
 //      - ALU_src is not set => op2
 wire [31:0] ass_op2 = (ALU_src) ?  imm_value : op2;
 
-ALU alu(
+RISCV_ALU alu(
     .op1(op1),
     .op2(ass_op2),
 

@@ -1,5 +1,5 @@
 
-module ALU(
+module RISCV_ALU(
     input [31:0]    op1,op2,
 
     input [2:0]     ALU_op,

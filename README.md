@@ -7,6 +7,7 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 # Sources
 
 - https://github.com/sipeed/sipeed_wiki/tree/main/docs/hardware/en/tang/tang-primer-20k
+- https://github.com/sipeed/TangPrimer-20K-example
 - https://github.com/YosysHQ/apicula/wiki
 - https://chipmunklogic.com/digital-logic-design/designing-pequeno-risc-v-cpu-from-scratch-part-4-fetch-unit/
 - https://pyjamabrah.com/posts/writing-a-risc-v-cpu/
@@ -20,3 +21,4 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://v2kparse.sourceforge.net/includes.pdf
 - https://www.01signal.com/verilog-design/arithmetic/signed-wire-reg/
 - https://cva6.readthedocs.io/en/latest/01_cva6_user/RISCV_Instructions_RV32I.html
+- https://www.ustcpetergu.com/MyBlog/experience/2021/07/09/about-riscv-testing.html
