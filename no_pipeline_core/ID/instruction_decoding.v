@@ -1,5 +1,9 @@
 
-module instruction_decoding(
+module instruction_decoding
+#(
+    parameter XLEN = 32
+)
+(
 
     // INPUT
 
@@ -8,29 +12,26 @@ module instruction_decoding(
 
     input [4:0]         reg_write_dest,
     input               need_to_write,
-    input [31:0]        reg_write_dest_value,
-    input [31:0]        in_pc_value,
+    input [XLEN-1:0]        reg_write_dest_value,
+    input [XLEN-1:0]        in_pc_value,
 
     // OUTPUT
 
-    output [63:0]       sign_extended,
-    output [31:0]       first_reg,
-    output [31:0]       second_reg,
+    output [XLEN-1:0]       first_reg,
+    output [XLEN-1:0]       second_reg,
     
-
     output [4:0]        reg_write_target,
     output              reg_write,
     output              reg_write_from_load,
 
     output [31:0]       out_pc_value,
 
-
     // control data
     output [2:0]         ALU_op_base,
     output [6:0]         ALU_op_ext,
     output               ALU_src,           // check if use reg2 or imm
 
-    output [31:0]        imm_value,
+    output [XLEN-1:0]        imm_value,
 
     output               is_branch,
     output               mem_write,
@@ -59,8 +60,6 @@ assign reg_write_from_load = (opcode=='b0000011) ? 1'b1 : 1'b0;
 
 assign is_branch = (opcode == 'b1100011)? 1'b1 : 1'b0;
 
-assign sign_extended = {{32{instruction[31]}}, instruction};
-
 // assign is_R_format = opcode == 'b0110011;
 assign is_I_format = (opcode == 'b0010011) || (opcode == 'b0000011) || (opcode== 'b1100111) || (opcode == 'b1110011);
 assign is_J_format = opcode == 'b1101111;
@@ -69,13 +68,21 @@ assign is_B_format = opcode == 'b1100011;
 assign is_U_format = opcode == 'b0110111;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
-assign imm_value = 
+wire [31:0] imm_value_32 = 
             (is_I_format && (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? {27'b0,instruction[24:20]} :
             (is_I_format) ? {{21{instruction[31]}},instruction[31:20]} :
             (is_J_format) ? {{11{instruction[31]}},instruction[31],instruction[21:12],instruction[22],instruction[30:23],1'b0} :
             (is_S_format) ? {{20{instruction[31]}},instruction[31:25],instruction[11:7]} :
             (is_B_format) ? {{19{instruction[31]}},instruction[31],instruction[7],instruction[30:25],instruction[11:8],1'b0} :
             (is_U_format) ? {instruction[31:12],12'b0} : 32'b0;
+
+
+generate
+    if(XLEN>32)
+        assign imm_value = {{(XLEN-32){imm_value_32[31]}},imm_value_32};
+    else
+        assign imm_value = imm_value_32;
+endgenerate
 
 
 wire is_load_or_store = (opcode=='b0000011 || is_S_format);

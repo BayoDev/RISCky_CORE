@@ -1,5 +1,9 @@
 
-module Reg8Mux(
+module Reg8Mux
+#(
+    parameter XLEN = 32
+)
+(
     input [2:0]           src_one,
     input [2:0]           src_two,
 
@@ -7,13 +11,13 @@ module Reg8Mux(
     input           write_enable,
     input           clk,
     input           reset,
-    input  [31:0]   data_in,
+    input  [XLEN-1:0]   data_in,
 
-    output [31:0]   out_one,
-    output [31:0]   out_two
+    output [XLEN-1:0]   out_one,
+    output [XLEN-1:0]   out_two
 );
 
-wire [31:0] reg1_out,reg2_out,reg3_out,reg4_out;
+wire [XLEN-1:0] reg1_out,reg2_out,reg3_out,reg4_out;
 
 Reg4Mux reg1(
     src_one[1:0],

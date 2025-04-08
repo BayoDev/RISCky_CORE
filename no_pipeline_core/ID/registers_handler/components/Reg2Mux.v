@@ -1,5 +1,9 @@
 
-module Reg2Mux(
+module Reg2Mux
+#(
+    parameter XLEN = 32
+)
+(
     input           src_one,
     input           src_two,
 
@@ -7,13 +11,13 @@ module Reg2Mux(
     input           write_enable,
     input           clk,
     input           reset,
-    input  [31:0]   data_in,
+    input  [XLEN-1:0]   data_in,
 
-    output [31:0]   out_one,
-    output [31:0]   out_two
+    output [XLEN-1:0]   out_one,
+    output [XLEN-1:0]   out_two
 );
 
-wire [31:0] reg1_out,reg2_out;
+wire [XLEN-1:0] reg1_out,reg2_out;
 
 register reg1(write_enable && ~dest ,clk,reset,data_in,reg1_out);
 register reg2(write_enable && dest,clk,reset,data_in,reg2_out);
