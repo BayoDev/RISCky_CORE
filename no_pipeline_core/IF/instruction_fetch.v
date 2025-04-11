@@ -27,7 +27,11 @@ module instruction_fetch
 wire [31:0] instr_wire_out;
 wire [XLEN-1:0] pc_prop_wire;
 
-pc_register pc(
+pc_register #(
+    .XLEN(XLEN)
+)
+pc
+(
     .clk(clk),
     .rst(rst),
     .write_en(was_branch),
@@ -35,7 +39,11 @@ pc_register pc(
     .data_out(pc_prop_wire)
 );
 
-instruction_memory mem(
+instruction_memory #(
+    .XLEN(XLEN)
+)
+mem
+(
     .clk(clk),
     .rst(rst),
     .address(was_branch ? branch_result : pc_prop_wire), // Use branch_result immediately if was_branch is true

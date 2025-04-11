@@ -1,5 +1,9 @@
 
-module execution(
+module execution
+#(
+    parameter XLEN = 32
+)
+(
 
     // INPUT
 
@@ -7,13 +11,10 @@ module execution(
     input clk,rst,
 
     // First operand
-    input [31:0]    op1,
+    input [XLEN-1:0]    op1,
     // Second operand
-    input [31:0]    op2,
-
-    // Sign extended imm value (TODO: I think this is not used/necessary)
-    input [63:0]    sign_extended,
-
+    input [XLEN-1:0]    op2,
+    
     // Defines ALU op
     input [2:0]     ALU_op,
     // Defines additional ALU op info
@@ -22,28 +23,28 @@ module execution(
     input           ALU_src,
 
     // PC value used for branch target calculation
-    input [31:0]    in_pc_value,
+    input [XLEN-1:0]    in_pc_value,
 
     // Set if is a branch operation
     input                   is_branch_in,
 
     // Value of immediate field
-    input signed [31:0]     imm_value,
+    input signed [XLEN-1:0]     imm_value,
 
 
     // OUTPUT
 
     // Result of ALU operation
-    output [31:0]           res,
+    output [XLEN-1:0]           res,
 
     // Is set if result is zero
     output                  zero,
 
     // Result of branch operation (TODO: merge this with normal ALU operation if possible)
-    output [31:0]           branch_result,
+    output [XLEN-1:0]           branch_result,
 
     // Propagate second register value
-    output [31:0]           second_reg_propagation,
+    output [XLEN-1:0]           second_reg_propagation,
 
     // Is set if it's a branch operation and the condition for the branch is met
     output                  is_branch_out
@@ -59,9 +60,14 @@ module execution(
 //          - Handle immediate case ...
 //          - ...
 //      - ALU_src is not set => op2
-wire [31:0] ass_op2 = (ALU_src) ?  imm_value : op2;
+wire [XLEN-1:0] ass_op2 = (ALU_src) ?  imm_value : op2;
 
-RISCV_ALU alu(
+RISCV_ALU 
+#(
+    .XLEN(XLEN)
+)
+alu
+(
     .op1(op1),
     .op2(ass_op2),
 
@@ -94,6 +100,6 @@ assign branch_result = imm_value + in_pc_value;
 //=====================
 
 assign second_reg_propagation = op2;
-assign zero = (res==32'b0) ? 1'b1 : 1'b0;
+assign zero = (res==XLEN'b0) ? 1'b1 : 1'b0;
 
 endmodule

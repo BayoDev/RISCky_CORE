@@ -19,7 +19,11 @@ module Reg32Mux
 
 wire [XLEN-1:0] reg1_out,reg2_out,reg3_out,reg4_out;
 
-Reg16Mux reg1(
+Reg16Mux
+#(
+    .XLEN(XLEN)
+)
+reg1(
     src_one[3:0],
     src_two[3:0],
     dest[3:0],
@@ -31,7 +35,11 @@ Reg16Mux reg1(
     reg2_out
 );
 
-Reg16Mux reg2(
+Reg16Mux
+#(
+    .XLEN(XLEN)
+)
+reg2(
     src_one[3:0],
     src_two[3:0],
     dest[3:0],

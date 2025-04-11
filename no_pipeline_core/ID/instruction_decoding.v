@@ -51,7 +51,6 @@ wire [4:0] rs1          = instruction     [19:15];
 wire [4:0] rs2          = instruction     [24:20];
 wire [6:0] funct7       = instruction     [31:25];
 
-
 assign is_mem_access = (opcode=='b0000011 || opcode == 'b0100011);
 assign reg_write_target = rd;
 assign reg_write = (opcode!='b1100011 && opcode!='b0100011 && opcode!='b1110011) ? 1'b1 : 1'b0;
@@ -84,7 +83,6 @@ generate
         assign imm_value = imm_value_32;
 endgenerate
 
-
 wire is_load_or_store = (opcode=='b0000011 || is_S_format);
 
 // In case of load/store the EX operation should alawys be adding
@@ -94,7 +92,12 @@ assign ALU_op_ext = (is_load_or_store) ? 'b0 :
         (opcode == 'b0110011 || (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? funct7 : 'b0;
 assign ALU_src = (opcode=='b0010011 || opcode=='b0000011 || opcode=='b0100011)? 1'b1: 1'b0;
 
-registers_controller reg_ctr(
+registers_controller
+#(
+    .XLEN(XLEN)
+)
+reg_ctr
+(
     .src_one(rs1),
     .src_two(rs2),
     .dest(reg_write_dest),

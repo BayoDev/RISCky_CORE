@@ -17,7 +17,12 @@ module registers_controller
 
 wire [XLEN-1:0]     int_out_one,int_out_two;
 
-Reg32Mux registers_mux(
+Reg32Mux
+#(
+    .XLEN(XLEN)
+)
+registers_mux
+(
     .src_one(src_one),
     .src_two(src_two),
     .dest(dest),
