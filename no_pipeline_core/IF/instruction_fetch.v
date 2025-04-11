@@ -1,12 +1,31 @@
-module instruction_fetch(
+module instruction_fetch
+#(
+    parameter XLEN = 32
+)
+(
+
+    // INPUT
+
+    // Global singlas
     input clk, rst,
-    input [31:0] branch_result,
+
+    // Result of previous branch operation
+    input [XLEN-1:0] branch_result,
+    
+    // Whether to use increased PC value or branch result (1==>use branch result)
     input was_branch,
+
+    // OUTPUT
+
+    // Instruction to be executed
     output reg [31:0] instr_out,
-    output reg [31:0] pc_propagation
+
+    // PC corresponding to the instruction that is being executed
+    output reg [XLEN-1:0] pc_propagation
 );
 
-wire [31:0] instr_wire_out, pc_prop_wire;
+wire [31:0] instr_wire_out;
+wire [XLEN-1:0] pc_prop_wire;
 
 pc_register pc(
     .clk(clk),
@@ -26,7 +45,7 @@ instruction_memory mem(
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         instr_out <= 32'b0;
-        pc_propagation <= 32'b0;
+        pc_propagation <= XLEN'b0;
     end else begin
         instr_out <= instr_wire_out;
         pc_propagation <= was_branch ? branch_result : pc_prop_wire; // Update pc_propagation accordingly
