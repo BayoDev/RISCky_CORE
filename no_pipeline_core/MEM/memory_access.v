@@ -1,16 +1,20 @@
-module memory_access(
+module memory_access
+#(
+    parameter XLEN = 32
+)
+(
 
     input clk,rst,
 
     // INPUT
 
-    input [31:0]    ex_result,
+    input [XLEN-1:0]    ex_result,
     input           ex_zero,
     input           is_branch_op,
     input           mem_write,
     input           mem_read,
 
-    input [31:0]    write_data,
+    input [XLEN-1:0]    write_data,
 
     input           dest_reg_prog_in,
 
@@ -19,7 +23,12 @@ module memory_access(
     output           is_valid_branch,
     output           dest_reg_prog_out,
 
-    output [31:0]    memory_res,original_value
+    output [XLEN-1:0]    memory_res,original_value,
+
+    // UART
+
+    output reg [7:0] uart_tx_out,
+    output  reg     uart_tx_ready
 
 );
 
@@ -38,7 +47,11 @@ end
 
 // TODO: propagate content of 2nd register to use in store operations
 
-data_memory mem(
+data_memory 
+#(
+    .XLEN(XLEN)
+)
+mem(
 
     .clk(clk),
     .rst(rst),
@@ -47,8 +60,10 @@ data_memory mem(
     .data_out(memory_res),
 
     .data_in(write_data),
-    .write_enable(mem_write)
+    .write_enable(mem_write),
 
+    .uart_tx_out(uart_tx_out),
+    .uart_tx_ready(uart_tx_ready)
 );
 
 endmodule

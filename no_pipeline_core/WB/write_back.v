@@ -1,10 +1,14 @@
 
-module write_back(
+module write_back
+#(
+    parameter XLEN = 32
+)
+(
 
     input mem_to_reg,
-    input [31:0] data,orig,
+    input [XLEN-1:0] data,orig,
     
-    output  [31:0]  result
+    output  [XLEN-1:0]  result
 );
 
 assign result = (mem_to_reg) ? data : orig;

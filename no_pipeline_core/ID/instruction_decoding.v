@@ -60,11 +60,11 @@ assign reg_write_from_load = (opcode=='b0000011) ? 1'b1 : 1'b0;
 assign is_branch = (opcode == 'b1100011)? 1'b1 : 1'b0;
 
 // assign is_R_format = opcode == 'b0110011;
-assign is_I_format = (opcode == 'b0010011) || (opcode == 'b0000011) || (opcode== 'b1100111) || (opcode == 'b1110011);
-assign is_J_format = opcode == 'b1101111;
-assign is_S_format = opcode == 'b0100011;
-assign is_B_format = opcode == 'b1100011;
-assign is_U_format = opcode == 'b0110111;
+wire is_I_format = (opcode == 'b0010011) || (opcode == 'b0000011) || (opcode== 'b1100111) || (opcode == 'b1110011);
+wire is_J_format = opcode == 'b1101111;
+wire is_S_format = opcode == 'b0100011;
+wire is_B_format = opcode == 'b1100011;
+wire is_U_format = opcode == 'b0110111;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
 wire [31:0] imm_value_32 = 

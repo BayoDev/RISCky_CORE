@@ -1,11 +1,63 @@
 
 
-module top_bench();
+module top_bench(
+	input                        clk,
+    input                        rst,
+	input                        uart_rx,
+	output                       uart_tx,
 
-reg clk,rst;
-always #5 clk = ~clk; 
+    output leddington
+);
+
+// reg clk,rst;
+// always #5 clk = ~clk; 
+
+assign leddington = rst;
 
 integer i;
+
+// COPIED DATA
+
+parameter                        CLK_FRE  = 27;//Mhz
+parameter                        UART_FRE = 115200;//Mhz
+wire rx_data_ready = 1'b1;//always can receive data,
+wire tx_data_ready;
+
+// wire [7:0] rx_data;
+// wire rx_data_valid;
+
+// uart_rx#
+// (
+// 	.CLK_FRE(CLK_FRE),
+// 	.BAUD_RATE(UART_FRE)
+// ) uart_rx_inst
+// (
+// 	.clk                        (clk                      ),
+// 	.rst_n                      (rst                      ),
+// 	.rx_data                    (rx_data                  ),
+// 	.rx_data_valid              (rx_data_valid            ),
+// 	.rx_data_ready              (rx_data_ready            ),
+// 	.rx_pin                     (uart_rx                  )
+// );
+
+wire tx_data_valid;
+wire [7:0] tx_data;
+
+uart_tx#
+(
+	.CLK_FRE(CLK_FRE),
+	.BAUD_RATE(UART_FRE)
+) uart_tx_inst
+(
+	.clk                        (clk                      ),
+	.rst_n                      (rst                      ),
+	.tx_data                    (tx_data                  ),
+	.tx_data_valid              (tx_data_valid            ),
+	.tx_data_ready              (tx_data_ready            ),
+	.tx_pin                     (uart_tx                  )
+);
+
+// ==========================
 
 //=======================
 //      STAGE WIRES
@@ -31,7 +83,6 @@ wire [31:0]     id_write_value_in;
 wire [31:0]     id_pc_propagation_in;
 
 // output
-wire [63:0]     id_sign_extended_out;
 wire [31:0]     id_first_reg_out;
 wire [31:0]     id_second_reg_out;
 wire [4:0]      id_write_reg_dest_out;
@@ -120,8 +171,6 @@ instruction_decoding id_phase(
 
     .in_pc_value(id_pc_propagation_in),
 
-
-    .sign_extended(id_sign_extended_out),
     .first_reg(id_first_reg_out),
     .second_reg(id_second_reg_out),
     
@@ -145,7 +194,6 @@ assign id_write_reg_dest_in = id_write_reg_dest_out;
 
 assign ex_op1_in = id_first_reg_out;
 assign ex_op2_in = id_second_reg_out;
-assign ex_sign_extended_in = id_sign_extended_out;
 assign ex_alu_src_in = id_alu_src_out;
 assign ex_alu_op_base_in = id_alu_op_base_out;
 assign ex_alu_op_ext_in = id_alu_op_ext_out;
@@ -159,7 +207,6 @@ execution ex_phase(
 
     .op1(ex_op1_in),
     .op2(ex_op2_in),
-    .sign_extended(ex_sign_extended_in),
 
     .ALU_op(ex_alu_op_base_in),
     .ALU_op_ext(ex_alu_op_ext_in),
@@ -203,7 +250,10 @@ memory_access mem_phase(
     .is_valid_branch(mem_is_valid_branch_out),
     .dest_reg_prog_out(mem_dest_reg_prog_out),
     .memory_res(mem_memory_res_out),
-    .original_value(mem_original_value_out)
+    .original_value(mem_original_value_out),
+
+    .uart_tx_out(tx_data),
+    .uart_tx_ready(tx_data_valid)
 );
 // TODO: change this to go through barrier with pipeline
 // assign id_write_reg_dest_in = mem_dest_reg_prog_out;
@@ -223,15 +273,15 @@ write_back wb_phase(
     .result(wb_result_out)
 );
 
-initial begin
-    $dumpfile("test.vcd");
-    $dumpvars(0,top_bench);
+// initial begin
+//     $dumpfile("test.vcd");
+//     $dumpvars(0,top_bench);
 
-    clk = 0;
-    rst=0;
-    #1 rst = 1;
-    #10 rst = 0;
-    #1000 $finish;
-end
+//     clk = 0;
+//     rst=0;
+//     #1 rst = 1;
+//     #10 rst = 0;
+//     #1000 $finish;
+// end
 
 endmodule
