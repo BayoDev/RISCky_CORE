@@ -1,6 +1,10 @@
 
 
-module top_bench(
+module top_bench
+#(
+    parameter XLEN = 32
+)
+(
 	input                        clk,
     input                        rst,
 	input                        uart_rx,
@@ -66,12 +70,12 @@ uart_tx#
 // IF
 
 // input
-wire [31:0] if_branch_result_in;
+wire [XLEN-1:0] if_branch_result_in;
 wire if_was_branch_in;
 
 // output
 wire [31:0] if_instr_out;
-wire [31:0] if_pc_propagation_out;
+wire [XLEN-1:0] if_pc_propagation_out;
 
 // ID
 
@@ -79,16 +83,16 @@ wire [31:0] if_pc_propagation_out;
 wire [31:0]     id_instr_in;
 wire [4:0]      id_write_reg_dest_in;
 wire            id_write_en_in;
-wire [31:0]     id_write_value_in;
-wire [31:0]     id_pc_propagation_in;
+wire [XLEN-1:0]     id_write_value_in;
+wire [XLEN-1:0]     id_pc_propagation_in;
 
 // output
-wire [31:0]     id_first_reg_out;
-wire [31:0]     id_second_reg_out;
+wire [XLEN-1:0]     id_first_reg_out;
+wire [XLEN-1:0]     id_second_reg_out;
 wire [4:0]      id_write_reg_dest_out;
 wire            id_write_en_out;
 wire            id_reg_write_from_load;
-wire [31:0]     id_pc_propagation_out;
+wire [XLEN-1:0]     id_pc_propagation_out;
 wire [2:0]      id_alu_op_base_out;
 wire [6:0]      id_alu_op_ext_out;
 wire            id_alu_src_out;
@@ -96,57 +100,61 @@ wire            id_is_branch_out;
 wire            id_is_write_back;
 wire            id_mem_write_out;
 wire            id_mem_read_out;
-wire [31:0]     id_imm_value_out;
+wire [XLEN-1:0]     id_imm_value_out;
 
 // EX
 
 // input
-wire [31:0]     ex_op1_in;
-wire [31:0]     ex_op2_in;
-wire [63:0]     ex_sign_extended_in;
+wire [XLEN-1:0]     ex_op1_in;
+wire [XLEN-1:0]     ex_op2_in;
+wire [XLEN-1:0]     ex_sign_extended_in;
 wire [2:0]      ex_alu_op_base_in;
 wire [6:0]      ex_alu_op_ext_in;
 wire            ex_alu_src_in;
-wire [31:0]     ex_pc_propagation_in;
+wire [XLEN-1:0]     ex_pc_propagation_in;
 wire            ex_is_branch_in;
-wire [31:0]     ex_imm_value_in;
+wire [XLEN-1:0]     ex_imm_value_in;
 
 // output
-wire [31:0]     ex_result_out;
+wire [XLEN-1:0]     ex_result_out;
 wire            ex_zero_out;
-wire [31:0]     ex_branch_result_out;
-wire [31:0]     ex_second_reg_propagation_out;
+wire [XLEN-1:0]     ex_branch_result_out;
+wire [XLEN-1:0]     ex_second_reg_propagation_out;
 wire            ex_is_branch_out;
 
 // MEM
 
 // input
 
-wire [31:0]     mem_ex_result_in;
+wire [XLEN-1:0]     mem_ex_result_in;
 wire            mem_ex_zero_in;
 wire            mem_is_branch_op_in;
 wire            mem_is_mem_write_in;
 wire            mem_is_mem_read_in;
-wire [31:0]     mem_write_data_in;
+wire [XLEN-1:0]     mem_write_data_in;
 wire            mem_dest_reg_prog_in;
 
 // output
 wire            mem_is_valid_branch_out;
 wire            mem_dest_reg_prog_out;
-wire [31:0]     mem_memory_res_out;
-wire [31:0]     mem_original_value_out;
+wire [XLEN-1:0]     mem_memory_res_out;
+wire [XLEN-1:0]     mem_original_value_out;
 
 // WB 
 
 // input
 wire            wb_mem_to_reg_in;
-wire [31:0]     wb_data_in;
-wire [31:0]     wb_orig_in;
+wire [XLEN-1:0]     wb_data_in;
+wire [XLEN-1:0]     wb_orig_in;
 
 // output
-wire [31:0]     wb_result_out;
+wire [XLEN-1:0]     wb_result_out;
 
-instruction_fetch if_phase(
+instruction_fetch 
+#(
+    .XLEN(XLEN)
+)
+if_phase(
     .clk(clk),
     .rst(rst),
 
@@ -160,7 +168,11 @@ instruction_fetch if_phase(
 assign id_instr_in = if_instr_out;
 assign id_pc_propagation_in = if_pc_propagation_out;
 
-instruction_decoding id_phase(
+instruction_decoding 
+#(
+    .XLEN(XLEN)
+)
+id_phase(
     .clk(clk),
     .rst(rst),
     
@@ -201,7 +213,11 @@ assign ex_pc_propagation_in = id_pc_propagation_out;
 assign ex_is_branch_in = id_is_branch_out;
 assign ex_imm_value_in = id_imm_value_out;
 
-execution ex_phase(
+execution 
+#(
+    .XLEN(XLEN)
+)
+ex_phase(
     .clk(clk),
     .rst(rst),
 
@@ -235,7 +251,11 @@ assign mem_is_mem_read_in = id_mem_read_out;
 assign mem_is_branch_op_in = id_is_branch_out;
 
 
-memory_access mem_phase(
+memory_access
+#(
+    .XLEN(XLEN)
+)
+mem_phase(
     .clk(clk),
     .rst(rst),
 
@@ -265,7 +285,11 @@ assign wb_data_in = mem_memory_res_out;
 assign wb_orig_in = mem_original_value_out;
 assign id_write_value_in = wb_result_out;
 
-write_back wb_phase(
+write_back
+#(
+    .XLEN(XLEN)
+)
+wb_phase(
     .mem_to_reg(wb_mem_to_reg_in),
     .data(wb_data_in),
     .orig(wb_orig_in),
