@@ -1,5 +1,16 @@
 # RISCky_CORE
 
+## ROADMAP
+
+0. - [ ] RV32I
+1. - [ ] RV64I
+2. - [ ] Zicsr
+3. - [ ] Zifencei
+4. - [ ] RV64IM
+5. - [ ] RV64IMA
+6. - [ ] RV64IMAF/D (RV64G)
+8. - [ ] RV64IMADC (RV64GC)
+
 # Toolchain
 
 Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-build)
@@ -22,3 +33,5 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://www.01signal.com/verilog-design/arithmetic/signed-wire-reg/
 - https://cva6.readthedocs.io/en/latest/01_cva6_user/RISCV_Instructions_RV32I.html
 - https://www.ustcpetergu.com/MyBlog/experience/2021/07/09/about-riscv-testing.html
+- https://riscv.github.io/riscv-isa-manual/snapshot/unprivileged/
+- https://riscv.github.io/riscv-isa-manual/snapshot/privileged/

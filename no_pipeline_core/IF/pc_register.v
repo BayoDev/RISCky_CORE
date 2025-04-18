@@ -11,7 +11,7 @@ module pc_register
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        data_out <= XLEN'b0;
+        data_out <= {XLEN{1'b0}};
     end else if (write_en) begin
         data_out <= data_in + 4; 
     end else begin

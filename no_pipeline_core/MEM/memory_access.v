@@ -18,6 +18,8 @@ module memory_access
 
     input           dest_reg_prog_in,
 
+    input [2:0]         funct3_prop_in,
+
     // OUTPUT
 
     output           is_valid_branch,
@@ -62,8 +64,11 @@ mem(
     .data_in(write_data),
     .write_enable(mem_write),
 
-    .uart_tx_out(uart_tx_out),
-    .uart_tx_ready(uart_tx_ready)
+    .word_size(funct3_prop_in)
+
+    // .uart_tx_out(uart_tx_out),
+    // .uart_tx_ready(uart_tx_ready)
+
 );
 
 endmodule

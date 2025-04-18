@@ -5,61 +5,10 @@ module top_bench
     parameter XLEN = 32
 )
 (
-	input                        clk,
-    input                        rst,
-	input                        uart_rx,
-	output                       uart_tx,
-
-    output leddington
 );
 
-// reg clk,rst;
-// always #5 clk = ~clk; 
-
-assign leddington = rst;
-
-integer i;
-
-// COPIED DATA
-
-parameter                        CLK_FRE  = 27;//Mhz
-parameter                        UART_FRE = 115200;//Mhz
-wire rx_data_ready = 1'b1;//always can receive data,
-wire tx_data_ready;
-
-// wire [7:0] rx_data;
-// wire rx_data_valid;
-
-// uart_rx#
-// (
-// 	.CLK_FRE(CLK_FRE),
-// 	.BAUD_RATE(UART_FRE)
-// ) uart_rx_inst
-// (
-// 	.clk                        (clk                      ),
-// 	.rst_n                      (rst                      ),
-// 	.rx_data                    (rx_data                  ),
-// 	.rx_data_valid              (rx_data_valid            ),
-// 	.rx_data_ready              (rx_data_ready            ),
-// 	.rx_pin                     (uart_rx                  )
-// );
-
-wire tx_data_valid;
-wire [7:0] tx_data;
-
-uart_tx#
-(
-	.CLK_FRE(CLK_FRE),
-	.BAUD_RATE(UART_FRE)
-) uart_tx_inst
-(
-	.clk                        (clk                      ),
-	.rst_n                      (rst                      ),
-	.tx_data                    (tx_data                  ),
-	.tx_data_valid              (tx_data_valid            ),
-	.tx_data_ready              (tx_data_ready            ),
-	.tx_pin                     (uart_tx                  )
-);
+reg clk,rst;
+always #5 clk = ~clk; 
 
 // ==========================
 
@@ -283,10 +232,10 @@ mem_phase(
     .is_valid_branch(mem_is_valid_branch_out),
     .dest_reg_prog_out(mem_dest_reg_prog_out),
     .memory_res(mem_memory_res_out),
-    .original_value(mem_original_value_out),
+    .original_value(mem_original_value_out)
 
-    .uart_tx_out(tx_data),
-    .uart_tx_ready(tx_data_valid)
+    // .uart_tx_out(tx_data),
+    // .uart_tx_ready(tx_data_valid)
 );
 // TODO: change this to go through barrier with pipeline
 // assign id_write_reg_dest_in = mem_dest_reg_prog_out;
@@ -310,15 +259,15 @@ wb_phase(
     .result(wb_result_out)
 );
 
-// initial begin
-//     $dumpfile("test.vcd");
-//     $dumpvars(0,top_bench);
+initial begin
+    $dumpfile("test.vcd");
+    $dumpvars(0,top_bench);
 
-//     clk = 0;
-//     rst=0;
-//     #1 rst = 1;
-//     #10 rst = 0;
-//     #1000 $finish;
-// end
+    clk = 0;
+    rst=0;
+    #1 rst = 1;
+    #10 rst = 0;
+    #1000 $finish;
+end
 
 endmodule

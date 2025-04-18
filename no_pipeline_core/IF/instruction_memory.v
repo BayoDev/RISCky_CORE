@@ -47,13 +47,32 @@ end
 //     memory[3] = 32'h00412103; // lw x2, 4(x2)     (Load value from memory at address x2 + 4 into x2)
 // end
 
-// Test: Loop and store 'a' (0x61) into address 0x680
+// Test: Store all 1s and load halfword (signed and unsigned)
 initial begin
-    memory[0] = 32'h06100093; // addi x1, x0, 0x61 (Load ASCII 'a' into x1)
-    memory[1] = 32'h68000113; // addi x2, x0, 0x680 (Load address 0x680 into x2)
-    memory[2] = 32'h00112023; // sw x1, 0(x2) (Store value of x1 into memory at address x2)
-    memory[3] = 32'h0000006f; // j 0 (Jump to the same instruction to loop)
+    memory[0] = 32'hfff00093; // addi x1, x0, -1   (Put value -1 (all 1s in 32-bit) into x1)
+    memory[1] = 32'h00400113; // addi x2, x0, 4    (Put value 4 into x2 as offset)
+    memory[2] = 32'h00112223; // sw x1, 4(x2)      (Store value of x1 into memory at address x2 + 4)
+    memory[3] = 32'h00411203; // lh x4, 4(x2)      (Load signed halfword from memory at address x2 + 4 into x4)
+    memory[4] = 32'h00415283; // lhu x5, 4(x2)     (Load unsigned halfword from memory at address x2 + 4 into x5)
 end
+
+// // Test: Loop and store 'a' (0x61) into address 0x680
+// initial begin
+//     memory[0] = 32'h06100093; // addi x1, x0, 0x61 (Load ASCII 'a' into x1)
+//     memory[1] = 32'h68000113; // addi x2, x0, 0x680 (Load address 0x680 into x2)
+//     memory[2] = 32'h00112023; // sw x1, 0(x2) (Store value of x1 into memory at address x2)
+//     memory[3] = 32'h0000006f; // j 0 (Jump to the same instruction to loop)
+// end
+
+// // Byte and Half-Word test
+// initial begin
+//     memory[0] = 32'h00a00093; // addi x1, x0, 10  (Put value 10 into x1)
+//     memory[1] = 32'h00400113; // addi x2, x0, 4   (Put value 4 into x2 as offset)
+//     memory[2] = 32'h001122a3; // sb x1, 4(x2)     (Store the least significant byte of x1 into memory at address x2 + 4)
+//     memory[3] = 32'h00412183; // lbu x3, 4(x2)    (Load unsigned byte from memory at address x2 + 4 into x3)
+//     memory[4] = 32'h00112323; // sh x1, 4(x2)     (Store the least significant half-word of x1 into memory at address x2 + 4)
+//     memory[5] = 32'h00412203; // lh x4, 4(x2)     (Load signed half-word from memory at address x2 + 4 into x4)
+// end
 
 // always @(posedge clk) begin
 //     data_out <= memory[address];

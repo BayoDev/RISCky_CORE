@@ -31,6 +31,7 @@ module execution
     // Value of immediate field
     input signed [XLEN-1:0]     imm_value,
 
+    input [2:0]     funct3_prop_in,
 
     // OUTPUT
 
@@ -47,7 +48,9 @@ module execution
     output [XLEN-1:0]           second_reg_propagation,
 
     // Is set if it's a branch operation and the condition for the branch is met
-    output                  is_branch_out
+    output                  is_branch_out,
+
+    output [2:0]            funct3_prop_out
 );
 
 //=====================
@@ -100,6 +103,7 @@ assign branch_result = imm_value + in_pc_value;
 //=====================
 
 assign second_reg_propagation = op2;
-assign zero = (res==XLEN'b0) ? 1'b1 : 1'b0;
+assign zero = (res=={XLEN{1'b0}}) ? 1'b1 : 1'b0;
+assign funct3_prop_out = funct3_prop_in;
 
 endmodule

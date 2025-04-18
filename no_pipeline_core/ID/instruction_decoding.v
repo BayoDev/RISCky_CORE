@@ -24,7 +24,7 @@ module instruction_decoding
     output              reg_write,
     output              reg_write_from_load,
 
-    output [31:0]       out_pc_value,
+    output [XLEN-1:0]       out_pc_value,
 
     // control data
     output [2:0]         ALU_op_base,
@@ -37,8 +37,9 @@ module instruction_decoding
     output               mem_write,
     output               mem_read,
 
-    output               is_write_back
+    output               is_write_back,
 
+    output [2:0]         funct3_prop_out
 
 );
 
@@ -87,6 +88,8 @@ wire is_load_or_store = (opcode=='b0000011 || is_S_format);
 
 // In case of load/store the EX operation should alawys be adding
 assign ALU_op_base =  (!is_load_or_store) ? funct3 : 'h0;
+
+assign funct3_prop_out = funct3;
 
 assign ALU_op_ext = (is_load_or_store) ? 'b0 :
         (opcode == 'b0110011 || (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? funct7 : 'b0;

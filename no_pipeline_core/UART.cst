@@ -1,4 +1,6 @@
 IO_LOC "clk" H11;
-IO_LOC "rst_n" T5;
+IO_LOC "rst" T10;
 IO_LOC "uart_rx" T13;
 IO_LOC "uart_tx" M11;
+
+IO_LOC "leddington" N16;

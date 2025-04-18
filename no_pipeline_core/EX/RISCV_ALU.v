@@ -1,4 +1,3 @@
-
 module RISCV_ALU
 #(
     parameter XLEN = 32
@@ -31,6 +30,6 @@ assign res= (ALU_op==3'b000 && ALU_op_ext==7'b0100000) ? signed_op1-signed_op2  
             (ALU_op==3'b101) ? signed_op1>>signed_op2 :                      
 
             (ALU_op==3'b010) ? ((signed_op1<signed_op2) ? 'b1 : 'b0 ) :
-            (ALU_op==3'b011) ? ((op1<op2) ? 'b1 : 'b0 ) : XLEN'h00000000;
+            (ALU_op==3'b011) ? ((op1<op2) ? 'b1 : 'b0 ) : {XLEN{1'b0}};
 
 endmodule

@@ -53,7 +53,7 @@ mem
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         instr_out <= 32'b0;
-        pc_propagation <= XLEN'b0;
+        pc_propagation <= {XLEN{1'b0}}; // Corrected reset value
     end else begin
         instr_out <= instr_wire_out;
         pc_propagation <= was_branch ? branch_result : pc_prop_wire; // Update pc_propagation accordingly
