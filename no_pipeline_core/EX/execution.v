@@ -65,6 +65,7 @@ module execution
 //      - ALU_src is not set => op2
 wire [XLEN-1:0] ass_op2 = (ALU_src) ?  imm_value : op2;
 
+wire [XLEN-1:0] alu_res;
 RISCV_ALU 
 #(
     .XLEN(XLEN)
@@ -77,7 +78,7 @@ alu
     .ALU_op(ALU_op),
     .ALU_op_ext(ALU_op_ext),
     
-    .res(res)
+    .res(alu_res)
 );
 
 //=====================
@@ -87,12 +88,12 @@ alu
 // TODO: can you handle this using the ALU instead of re-implementing these operations?
 // Valid branch
 assign is_branch_out = (!is_branch_in) ? 'b0 : (
-                (ALU_op=='b0 && zero) ?  'b1:
-                (ALU_op=='b1 && !zero) ? 'b1 :
-                (ALU_op=='b100 && ($signed(op1)<$signed(op2))) ? 'b1 :
-                (ALU_op=='b101 && ($signed(op1)>=$signed(op2))) ? 'b1 :
-                (ALU_op=='b110 && (op1<op2)) ? 'b1 :
-                (ALU_op=='b111 && (op1>=op2)) ? 'b1 : 'b0
+                (ALU_op=='h0 && zero) ?  'b1 :
+                (ALU_op=='h1 && !zero) ? 'b1 :
+                (ALU_op=='h4 && ($signed(op1)<$signed(op2))) ? 'b1 :
+                (ALU_op=='h5 && ($signed(op1)>=$signed(op2))) ? 'b1 :
+                (ALU_op=='h6 && (op1<op2)) ? 'b1 :
+                (ALU_op=='h7 && (op1>=op2)) ? 'b1 : 'b0
         );
 
 // Branch target
