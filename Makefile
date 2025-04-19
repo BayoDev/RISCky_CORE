@@ -1,8 +1,8 @@
 
 TARGET_FILE := ./no_pipeline_core/IF/*
 
-TARGET_BUILD:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/* ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/* ./no_pipeline_core/UART/*.v
-TARGET_SIMUL:= ./no_pipeline_core/simulation_bench.v ./no_pipeline_core/IF/* ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/* 
+TARGET_BUILD:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/*.v ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/* ./no_pipeline_core/UART/*.v
+TARGET_SIMUL:= ./no_pipeline_core/simulation_bench.v ./no_pipeline_core/IF/*.v ./no_pipeline_core/ID/* ./no_pipeline_core/ID/registers_handler/* ./no_pipeline_core/ID/registers_handler/components/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/* 
 SIMULATION_OUT:= test.sim
 
 DEVICE := GW2A-LV18PG256C8/I7

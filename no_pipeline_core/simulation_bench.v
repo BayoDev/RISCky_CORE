@@ -267,7 +267,7 @@ initial begin
     rst=0;
     #1 rst = 1;
     #10 rst = 0;
-    #1000 $finish;
+    #10000 $finish;
 end
 
 endmodule

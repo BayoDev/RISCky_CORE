@@ -35,3 +35,4 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://www.ustcpetergu.com/MyBlog/experience/2021/07/09/about-riscv-testing.html
 - https://riscv.github.io/riscv-isa-manual/snapshot/unprivileged/
 - https://riscv.github.io/riscv-isa-manual/snapshot/privileged/
+- https://www.fpga4fun.com/SD1.html
