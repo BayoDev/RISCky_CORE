@@ -23,7 +23,7 @@ initial begin
 end
 
 initial begin
-    $readmemh("./no_pipeline_core/IF/bios.hex", memory,0,511);
+    $readmemh("./no_pipeline_core/IF/test.hex", memory,0,511);
 end
 
 // always @(posedge clk) begin

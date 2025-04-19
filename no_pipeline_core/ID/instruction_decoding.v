@@ -39,7 +39,10 @@ module instruction_decoding
 
     output               is_write_back,
 
-    output [2:0]         funct3_prop_out
+    output [2:0]         funct3_prop_out,
+
+    output              is_link_and_jump,
+    output              is_link_and_jump_reg
 
 );
 
@@ -58,20 +61,22 @@ assign reg_write = (opcode!='b1100011 && opcode!='b0100011 && opcode!='b1110011)
 
 assign reg_write_from_load = (opcode=='b0000011) ? 1'b1 : 1'b0;
 
-assign is_branch = (opcode == 'b1100011)? 1'b1 : 1'b0;
-
 // assign is_R_format = opcode == 'b0110011;
 wire is_I_format = (opcode == 'b0010011) || (opcode == 'b0000011) || (opcode== 'b1100111) || (opcode == 'b1110011);
 wire is_J_format = opcode == 'b1101111;
 wire is_S_format = opcode == 'b0100011;
 wire is_B_format = opcode == 'b1100011;
 wire is_U_format = opcode == 'b0110111;
+assign is_link_and_jump = (opcode=='b1101111 || opcode=='b1100111);
+assign is_link_and_jump_reg = is_link_and_jump && opcode == 'b1100111;
+
+assign is_branch = (is_B_format) ? 1'b1 : 1'b0;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
 wire [31:0] imm_value_32 = 
             (is_I_format && (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? {27'b0,instruction[24:20]} :
             (is_I_format) ? {{21{instruction[31]}},instruction[31:20]} :
-            (is_J_format) ? {{11{instruction[31]}},instruction[31],instruction[21:12],instruction[22],instruction[30:23],1'b0} :
+            (is_J_format) ? {{11{instruction[31]}},instruction[31],instruction[19:12],instruction[20],instruction[30:21],1'b0}:
             (is_S_format) ? {{20{instruction[31]}},instruction[31:25],instruction[11:7]} :
             (is_B_format) ? {{19{instruction[31]}},instruction[31],instruction[7],instruction[30:25],instruction[11:8],1'b0} :
             (is_U_format) ? {instruction[31:12],12'b0} : 32'b0;

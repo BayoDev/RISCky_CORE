@@ -51,6 +51,8 @@ wire            id_mem_write_out;
 wire            id_mem_read_out;
 wire [XLEN-1:0]     id_imm_value_out;
 wire [2:0]   id_funct3_prop_out;
+wire                id_is_link_and_jump_out;
+wire                id_is_link_and_jump_reg_out;
 
 // EX
 
@@ -65,6 +67,8 @@ wire [XLEN-1:0]     ex_pc_propagation_in;
 wire            ex_is_branch_in;
 wire [XLEN-1:0]     ex_imm_value_in;
 wire [2:0]          ex_funct3_prop_in;
+wire                ex_is_link_and_jump_in;
+wire                ex_is_link_and_jump_reg_in;
 
 // output
 wire [XLEN-1:0]     ex_result_out;
@@ -154,7 +158,9 @@ id_phase(
     .mem_read(id_mem_read_out),
     .is_write_back(id_is_write_back),
 
-    .funct3_prop_out(id_funct3_prop_out)
+    .funct3_prop_out(id_funct3_prop_out),
+    .is_link_and_jump(id_is_link_and_jump_out),
+    .is_link_and_jump_reg(id_is_link_and_jump_reg_out)
 );
 // TODO: this is very messed up, this should be propagated through the ex phase
 assign id_write_reg_dest_in = id_write_reg_dest_out;
@@ -168,6 +174,8 @@ assign ex_pc_propagation_in = id_pc_propagation_out;
 assign ex_is_branch_in = id_is_branch_out;
 assign ex_imm_value_in = id_imm_value_out;
 assign ex_funct3_prop_in = id_funct3_prop_out;
+assign ex_is_link_and_jump_in = id_is_link_and_jump_out;
+assign ex_is_link_and_jump_reg_in = id_is_link_and_jump_reg_out;
 
 execution 
 #(
@@ -186,6 +194,9 @@ ex_phase(
     .imm_value(ex_imm_value_in),
 
     .funct3_prop_in(ex_funct3_prop_in),
+
+    .is_link_and_jump(ex_is_link_and_jump_in),
+    .is_link_and_jump_reg(ex_is_link_and_jump_reg_in),
 
     .res(ex_result_out),
     .zero(ex_zero_out),

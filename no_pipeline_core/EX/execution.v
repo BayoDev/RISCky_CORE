@@ -1,4 +1,3 @@
-
 module execution
 #(
     parameter XLEN = 32
@@ -32,6 +31,9 @@ module execution
     input signed [XLEN-1:0]     imm_value,
 
     input [2:0]     funct3_prop_in,
+
+    input is_link_and_jump,
+    input is_link_and_jump_reg,
 
     // OUTPUT
 
@@ -81,23 +83,28 @@ alu
     .res(alu_res)
 );
 
+// Explicitly assign the ALU result to the output port `res`
+assign res = (is_link_and_jump) ? in_pc_value+'d4 : alu_res;
+
 //=====================
 //    BRANCH LOGIC
 //=====================
 
 // TODO: can you handle this using the ALU instead of re-implementing these operations?
 // Valid branch
-assign is_branch_out = (!is_branch_in) ? 'b0 : (
+assign is_branch_out = 
+                (is_link_and_jump) ? 'b1 :
+                (!is_branch_in) ? 'b0 : 
                 (ALU_op=='h0 && zero) ?  'b1 :
                 (ALU_op=='h1 && !zero) ? 'b1 :
                 (ALU_op=='h4 && ($signed(op1)<$signed(op2))) ? 'b1 :
                 (ALU_op=='h5 && ($signed(op1)>=$signed(op2))) ? 'b1 :
                 (ALU_op=='h6 && (op1<op2)) ? 'b1 :
                 (ALU_op=='h7 && (op1>=op2)) ? 'b1 : 'b0
-        );
+        ;
 
 // Branch target
-assign branch_result = imm_value + in_pc_value;
+assign branch_result = (is_link_and_jump_reg) ? imm_value+op1 : imm_value + in_pc_value;
 
 //=====================
 //        FLAGS
