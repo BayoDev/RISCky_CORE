@@ -1,6 +1,6 @@
 
 
-module top_bench
+module simulation_bench
 #(
     parameter XLEN = 32
 )
@@ -53,6 +53,8 @@ wire [XLEN-1:0]     id_imm_value_out;
 wire [2:0]   id_funct3_prop_out;
 wire                id_is_link_and_jump_out;
 wire                id_is_link_and_jump_reg_out;
+wire                id_is_lui_out;
+wire                id_is_auipc_out;
 
 // EX
 
@@ -69,6 +71,8 @@ wire [XLEN-1:0]     ex_imm_value_in;
 wire [2:0]          ex_funct3_prop_in;
 wire                ex_is_link_and_jump_in;
 wire                ex_is_link_and_jump_reg_in;
+wire                ex_is_lui_in;
+wire                ex_is_auipc_in;
 
 // output
 wire [XLEN-1:0]     ex_result_out;
@@ -160,7 +164,10 @@ id_phase(
 
     .funct3_prop_out(id_funct3_prop_out),
     .is_link_and_jump(id_is_link_and_jump_out),
-    .is_link_and_jump_reg(id_is_link_and_jump_reg_out)
+    .is_link_and_jump_reg(id_is_link_and_jump_reg_out),
+
+    .is_lui(id_is_lui_out),
+    .is_auipc(id_is_auipc_out)
 );
 // TODO: this is very messed up, this should be propagated through the ex phase
 assign id_write_reg_dest_in = id_write_reg_dest_out;
@@ -176,6 +183,9 @@ assign ex_imm_value_in = id_imm_value_out;
 assign ex_funct3_prop_in = id_funct3_prop_out;
 assign ex_is_link_and_jump_in = id_is_link_and_jump_out;
 assign ex_is_link_and_jump_reg_in = id_is_link_and_jump_reg_out;
+assign ex_is_lui_in = id_is_lui_out;
+assign ex_is_auipc_in = id_is_auipc_out;
+
 
 execution 
 #(
@@ -197,6 +207,9 @@ ex_phase(
 
     .is_link_and_jump(ex_is_link_and_jump_in),
     .is_link_and_jump_reg(ex_is_link_and_jump_reg_in),
+
+    .is_lui(ex_is_lui_in),
+    .is_auipc(ex_is_auipc_in),
 
     .res(ex_result_out),
     .zero(ex_zero_out),
@@ -272,13 +285,13 @@ wb_phase(
 
 initial begin
     $dumpfile("test.vcd");
-    $dumpvars(0,top_bench);
+    $dumpvars(0,simulation_bench);
 
     clk = 0;
     rst=0;
     #1 rst = 1;
     #10 rst = 0;
-    #10000 $finish;
+    #20000 $finish;
 end
 
 endmodule

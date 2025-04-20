@@ -42,7 +42,10 @@ module instruction_decoding
     output [2:0]         funct3_prop_out,
 
     output              is_link_and_jump,
-    output              is_link_and_jump_reg
+    output              is_link_and_jump_reg,
+
+    output              is_lui,
+    output              is_auipc
 
 );
 
@@ -66,11 +69,14 @@ wire is_I_format = (opcode == 'b0010011) || (opcode == 'b0000011) || (opcode== '
 wire is_J_format = opcode == 'b1101111;
 wire is_S_format = opcode == 'b0100011;
 wire is_B_format = opcode == 'b1100011;
-wire is_U_format = opcode == 'b0110111;
+wire is_U_format = (opcode == 'b0110111 ||  opcode == 'b0010111);
 assign is_link_and_jump = (opcode=='b1101111 || opcode=='b1100111);
 assign is_link_and_jump_reg = is_link_and_jump && opcode == 'b1100111;
 
 assign is_branch = (is_B_format) ? 1'b1 : 1'b0;
+
+assign is_lui = opcode=='b0110111;
+assign is_auipc = opcode=='b0010111;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
 wire [31:0] imm_value_32 = 
@@ -84,6 +90,7 @@ wire [31:0] imm_value_32 =
 
 generate
     if(XLEN>32)
+        // TODO: this may be wrong for U type operations and XLEN>32
         assign imm_value = {{(XLEN-32){imm_value_32[31]}},imm_value_32};
     else
         assign imm_value = imm_value_32;

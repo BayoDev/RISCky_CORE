@@ -32,8 +32,13 @@ module execution
 
     input [2:0]     funct3_prop_in,
 
+    // is jal or jalr
     input is_link_and_jump,
+    // is jalr
     input is_link_and_jump_reg,
+
+    input is_lui,
+    input is_auipc,
 
     // OUTPUT
 
@@ -65,26 +70,25 @@ module execution
 //          - Handle immediate case ...
 //          - ...
 //      - ALU_src is not set => op2
-wire [XLEN-1:0] ass_op2 = (ALU_src) ?  imm_value : op2;
+wire [XLEN-1:0] ass_op1 = (is_link_and_jump) ? in_pc_value : (is_lui) ? imm_value : (is_auipc) ? in_pc_value : op1;
+wire [XLEN-1:0] ass_op2 = (is_link_and_jump) ? 'd4 : (is_lui) ? 'd0 : (is_auipc || ALU_src) ?  imm_value : op2;
+wire [2:0] ass_ALU_op = (is_lui || is_auipc || is_link_and_jump) ? 'h0 : ALU_op;
+wire [6:0] ass_ALU_op_ext = (is_lui || is_auipc || is_link_and_jump) ? 'h0 : ALU_op_ext;
 
-wire [XLEN-1:0] alu_res;
 RISCV_ALU 
 #(
     .XLEN(XLEN)
 )
 alu
 (
-    .op1(op1),
+    .op1(ass_op1),
     .op2(ass_op2),
 
-    .ALU_op(ALU_op),
-    .ALU_op_ext(ALU_op_ext),
+    .ALU_op(ass_ALU_op),
+    .ALU_op_ext(ass_ALU_op_ext),
     
-    .res(alu_res)
+    .res(res)
 );
-
-// Explicitly assign the ALU result to the output port `res`
-assign res = (is_link_and_jump) ? in_pc_value+'d4 : alu_res;
 
 //=====================
 //    BRANCH LOGIC
@@ -95,8 +99,10 @@ assign res = (is_link_and_jump) ? in_pc_value+'d4 : alu_res;
 assign is_branch_out = 
                 (is_link_and_jump) ? 'b1 :
                 (!is_branch_in) ? 'b0 : 
-                (ALU_op=='h0 && zero) ?  'b1 :
-                (ALU_op=='h1 && !zero) ? 'b1 :
+                // (ALU_op=='h0 && zero) ?  'b1 :
+                (ALU_op=='h0 && (op1==op2)) ?  'b1 :
+                // (ALU_op=='h1 && !zero) ? 'b1 :
+                (ALU_op=='h1 && (op1!=op2)) ?  'b1 :
                 (ALU_op=='h4 && ($signed(op1)<$signed(op2))) ? 'b1 :
                 (ALU_op=='h5 && ($signed(op1)>=$signed(op2))) ? 'b1 :
                 (ALU_op=='h6 && (op1<op2)) ? 'b1 :

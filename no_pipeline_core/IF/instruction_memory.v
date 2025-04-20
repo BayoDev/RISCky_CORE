@@ -12,8 +12,8 @@ module instruction_memory
 
 // reg [31:0] memory [128:0]
 
-(* syn_ramstyle = "block_ram" *) 
-reg [31:0] memory [511:0];
+// (* syn_ramstyle = "block_ram" *) 
+reg [31:0] memory [4095:0];
 
 integer i;
 initial begin
@@ -23,7 +23,7 @@ initial begin
 end
 
 initial begin
-    $readmemh("./no_pipeline_core/IF/test.hex", memory,0,511);
+    $readmemh("./software_tests/out/test_code.hex", memory,0);
 end
 
 // always @(posedge clk) begin

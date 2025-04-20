@@ -25,15 +25,19 @@ module data_memory
 );
 
 // (* syn_ramstyle = "block_ram" *) 
-reg [7:0] memory [512:0];
+reg [7:0] memory [4095:0];
 
 integer i;
 initial begin
-    for (i = 0; i < 256; i = i + 1) begin
+    for (i = 0; i < 4095; i = i + 1) begin
         memory[i] = {XLEN{1'b0}};
     end
 end
+initial begin
+    $readmemh("./software_tests/out/test_data.hex", memory,0);
+end
 
+reg is_special;
 
 // do this better
 always @(posedge clk) begin
@@ -41,6 +45,8 @@ always @(posedge clk) begin
         if(address==uart_tx_addr)begin
             uart_tx_out <= data_in;
             uart_tx_ready <= 'b1;
+            is_special<='b1;
+            $write("%c", data_in[7:0]); // Print ASCII byte
         end
         else begin
             case (word_size)
@@ -63,7 +69,7 @@ always @(posedge clk) begin
             // memory[address] <= data_in;
             uart_tx_ready <= 'b0;
         end
-    end
+    end else is_special <= 'b0;
 end
 
 // TODO: FINISH THIS, HOW DO I HANDLE 32/64 bits correctly in a parametrized way? (And do I even need to??)
