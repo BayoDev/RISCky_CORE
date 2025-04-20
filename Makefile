@@ -44,6 +44,7 @@ tests:
 	riscv32-unknown-linux-gnu-as -o ./software_tests/program.o ./software_tests/my_test.s && \
 	riscv32-unknown-linux-gnu-ld -o ./software_tests/program.elf ./software_tests/program.o && \
 	riscv32-unknown-linux-gnu-objcopy -O binary ./software_tests/program.elf ./software_tests/program.bin && \
-	xxd -e -c 4 -p ./software_tests/program.bin > ./software_tests/out/test_data.hex && \
+	xxd -e -c 4 -p ./software_tests/program.bin | sed 's/\(..\)\(..\)\(..\)\(..\)/\4\3\2\1/' > ./software_tests/out/test_code.hex && \
 	xxd -e -c 1 -p ./software_tests/program.bin > ./software_tests/out/test_data.hex && \
+	riscv32-unknown-linux-gnu-objdump -d -x -h -s -t ./software_tests/program.elf > ./software_tests/out/objdump_output.txt && \
 	rm -f ./software_tests/program.o ./software_tests/program.elf ./software_tests/program.bin

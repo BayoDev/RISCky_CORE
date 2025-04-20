@@ -25,11 +25,11 @@ module data_memory
 );
 
 // (* syn_ramstyle = "block_ram" *) 
-reg [7:0] memory [4095:0];
+reg [7:0] memory [8191:0];
 
 integer i;
 initial begin
-    for (i = 0; i < 4095; i = i + 1) begin
+    for (i = 0; i < 8192; i = i + 1) begin
         memory[i] = {XLEN{1'b0}};
     end
 end
