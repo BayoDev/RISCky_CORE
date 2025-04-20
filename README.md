@@ -3,13 +3,12 @@
 ## ROADMAP
 
 0. - [ ] RV32I
-1. - [ ] RV64I
 2. - [ ] Zicsr
 3. - [ ] Zifencei
-4. - [ ] RV64IM
-5. - [ ] RV64IMA
-6. - [ ] RV64IMAF/D (RV64G)
-8. - [ ] RV64IMADC (RV64GC)
+4. - [ ] RV32IM
+5. - [ ] RV32IMA
+6. - [ ] RV32IMAF/D (RV64G)
+8. - [ ] RV32IMADC (RV64GC)
 
 # Toolchain
 

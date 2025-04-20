@@ -14,7 +14,7 @@ full_compile: synth
 create_dir:
 	mkdir -p out/
 
-.PHONY: clean sim synth trace pack load flash
+.PHONY: clean sim synth trace pack load flash tests
 
 clean:
 	rm -r out/
@@ -39,3 +39,11 @@ sim: iverilog
 
 iverilog:
 	iverilog -o $(SIMULATION_OUT) $(TARGET_SIMUL)
+
+tests:
+	riscv32-unknown-linux-gnu-as -o ./software_tests/program.o ./software_tests/my_test.s && \
+	riscv32-unknown-linux-gnu-ld -o ./software_tests/program.elf ./software_tests/program.o && \
+	riscv32-unknown-linux-gnu-objcopy -O binary ./software_tests/program.elf ./software_tests/program.bin && \
+	xxd -e -c 4 -p ./software_tests/program.bin > ./software_tests/out/test_data.hex && \
+	xxd -e -c 1 -p ./software_tests/program.bin > ./software_tests/out/test_data.hex && \
+	rm -f ./software_tests/program.o ./software_tests/program.elf ./software_tests/program.bin
