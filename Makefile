@@ -1,6 +1,4 @@
 
-TARGET_FILE := ./no_pipeline_core/IF/*
-
 TARGET_BUILD:= ./no_pipeline_core/top_bench.v ./no_pipeline_core/IF/*.v ./no_pipeline_core/ID/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/* ./no_pipeline_core/UART/*.v
 TARGET_SIMUL:= ./no_pipeline_core/simulation_bench.v ./no_pipeline_core/IF/*.v ./no_pipeline_core/ID/* ./no_pipeline_core/EX/* ./no_pipeline_core/MEM/* ./no_pipeline_core/WB/*
 SIMULATION_OUT:= test.sim
@@ -39,12 +37,3 @@ sim: iverilog
 
 iverilog:
 	iverilog -o $(SIMULATION_OUT) $(TARGET_SIMUL)
-
-tests:
-	riscv32-unknown-linux-gnu-as -o ./software_tests/program.o ./software_tests/my_test.s && \
-	riscv32-unknown-linux-gnu-ld -o ./software_tests/program.elf ./software_tests/program.o && \
-	riscv32-unknown-linux-gnu-objcopy -O binary ./software_tests/program.elf ./software_tests/program.bin && \
-	xxd -e -c 4 -p ./software_tests/program.bin | sed 's/\(..\)\(..\)\(..\)\(..\)/\4\3\2\1/' > ./software_tests/out/test_code.hex && \
-	xxd -e -c 1 -p ./software_tests/program.bin > ./software_tests/out/test_data.hex && \
-	riscv32-unknown-linux-gnu-objdump -d -x -h -s -t ./software_tests/program.elf > ./software_tests/out/objdump_output.txt && \
-	rm -f ./software_tests/program.o ./software_tests/program.elf ./software_tests/program.bin
