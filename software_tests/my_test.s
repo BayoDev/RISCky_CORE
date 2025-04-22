@@ -5,13 +5,16 @@
 
 __start:
 
-    li sp,0x1000
+    li sp,0x1100
 
     la a0,welcome_msg
     call print_string
 
     call test_reg_to_reg
     call test_reg_to_imm
+    call test_store_load
+    call test_execution_flow
+    call test_lui_auipc
 
     inf_loop:
     j inf_loop
@@ -275,6 +278,219 @@ test_reg_to_imm:
 
     ret
 
+test_store_load:
+
+    addi sp, sp, -4
+    sw ra, 0(sp)
+
+    la a0,memops_msg
+    call print_string
+
+    # -----------------------------------------------------------
+    # SB/LB
+    li a0,0x1000
+    li t0,0xFFF
+    li t3,-1
+    sb t0,0(a0)
+    lb t1,0(a0)
+    bne t1,t3,fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # LBU
+    li a0,0x1000
+    li t0,0xFFF
+    li t3,0xFF
+    sb t0,0(a0)
+    lbu t1,0(a0)
+    bne t1,t3,fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # SH/LH
+    li a0,0x1000
+    li t0,0xF555
+    li t3,0xFFFFF555
+    sh t0,0(a0)
+    lh t1,0(a0)
+    bne t1,t3,fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # LHU
+    li a0,0x1000
+    li t0,0xF555
+    li t3,0x0000F555
+    sh t0,0(a0)
+    lhu t1,0(a0)
+    bne t1,t3,fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # SW/LD
+    li a0,0x1000
+    li t0,0xF3F3F3F3
+    mv t3,t0
+    sw t0,0(a0)
+    lw t1,0(a0)
+    bne t1,t3,fail
+    call print_hash
+
+    la a0,passed_msg
+    call print_string
+
+    lw ra, 0(sp)
+    addi sp, sp, 4
+
+    ret
+
+test_execution_flow:
+
+    addi sp, sp, -4
+    sw ra, 0(sp)
+
+    la a0,cflow_msg
+    call print_string
+
+    # -----------------------------------------------------------
+    # beq
+    li t0,10
+    li t1,15
+    beq t0,t1,fail
+    li t1,10
+    beq t0,t1,1f
+    j fail
+    1:
+    call print_hash
+
+    # -----------------------------------------------------------
+    # bne
+    li t0,10
+    li t1,10
+    bne t0,t1,fail
+    li t1,15
+    bne t0,t1,1f
+    j fail
+    1:
+    call print_hash
+
+    # -----------------------------------------------------------
+    # blt
+    li t0,15
+    li t1,-2
+    blt t0,t1,fail
+    li t0,-20
+    blt t0,t1,1f
+    j fail
+    1:
+    call print_hash
+    
+    # -----------------------------------------------------------
+    # bge
+    li t0,-2
+    li t1,15
+    bge t0,t1,fail
+    li t1,-20
+    bge t0,t1,1f
+    j fail
+    1:
+    li t1,-20
+    bge t0,t1,2f
+    j fail
+    2:
+    call print_hash
+
+    # -----------------------------------------------------------
+    # bltu
+    li t0,-5
+    li t1,15
+    bltu t0,t1,fail
+    li t1,-1
+    bltu t0,t1,1f
+    j fail
+    1:
+    call print_hash
+
+    # -----------------------------------------------------------
+    # bgeu
+    li t0,15
+    li t1,-20
+    bgeu t0,t1,fail
+    li t0,-2
+    bgeu t0,t1,1f
+    j fail
+    1:
+    li t1,-2
+    bgeu t0,t1,2f
+    j fail
+    2:
+    call print_hash
+
+    # -----------------------------------------------------------
+    # jal
+    jal a0,jal_test
+    jal_fallback:
+    j fail
+    jal_test:
+    # rd = PC+4
+    la t0,jal_fallback 
+    bne a0,t0,fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # jalr
+    la a1, jalr_test
+    jalr a0,4(a1)
+    jalr_fallback:
+    j fail
+    jalr_test:
+    j fail
+    # rd = PC+4
+    la t0,jalr_fallback 
+    bne a0,t0,fail
+    call print_hash
+
+    la a0,passed_msg
+    call print_string
+
+    lw ra, 0(sp)
+    addi sp, sp, 4
+
+    ret
+
+test_lui_auipc:
+    addi sp, sp, -4
+    sw ra, 0(sp)
+
+    la a0,lui_auipc_msg
+    call print_string
+
+    # -----------------------------------------------------------
+    # LUI (Load Upper Immediate)
+    lui t0, 0x12345
+    li t3, 0x12345000
+    bne t0, t3, fail
+    call print_hash
+
+    # -----------------------------------------------------------
+    # AUIPC (Add Upper Immediate to PC)
+    auipc_pc:
+    auipc t2, 0x1     # should result in PC + 0x1000
+    lui t0,0x1
+    la t1, auipc_pc
+    add t0,t0,t1
+    bne t0, t2, fail
+    call print_hash
+
+    la a0,passed_msg
+    call print_string
+
+    lw ra, 0(sp)
+    addi sp, sp, 4
+
+    ret
+
+
 # --------------------------------------------------
 # Helper Functions
 # --------------------------------------------------
@@ -305,10 +521,6 @@ fail:
 # --------------------------------------------------
 # Data Section
 # --------------------------------------------------
-test_data:
-    .word 0
-    .word 0
-    .word 0
 
 welcome_msg:
     .asciz "\nRV32I ISA Test Program\n"
@@ -320,10 +532,13 @@ regreg_msg:
     .asciz "\nTesting Register-Register Ops... "
 
 memops_msg:
-    .asciz "\nTesting Memory Operations... "
+    .asciz "\nTesting load/store Operations... "
 
 cflow_msg:
     .asciz "\nTesting Control Flow... "
+
+lui_auipc_msg:
+    .asciz "\nTesting LUI/AUIPC Operations... "
 
 passed_msg:
     .asciz " PASSED\n"
