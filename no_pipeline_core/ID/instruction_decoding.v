@@ -58,7 +58,7 @@ wire [4:0] rs1          = instruction     [19:15];
 wire [4:0] rs2          = instruction     [24:20];
 wire [6:0] funct7       = instruction     [31:25];
 
-assign is_mem_access = (opcode=='b0000011 || opcode == 'b0100011);
+// assign is_mem_access = (opcode=='b0000011 || opcode == 'b0100011);
 assign reg_write_target = rd;
 assign reg_write = (opcode!='b1100011 && opcode!='b0100011 && opcode!='b1110011) ? 1'b1 : 1'b0;
 
@@ -80,8 +80,8 @@ assign is_auipc = opcode=='b0010111;
 
 // The R-format is not necessary and should go to the last else case (32'b0)
 wire [31:0] imm_value_32 = 
-            (is_I_format && (opcode == 'b0010011 && (funct3=='h1 || funct3=='h5))) ? {27'b0,instruction[24:20]} :
-            (is_I_format) ? {{21{instruction[31]}},instruction[31:20]} :
+            (is_I_format && (opcode == 7'b0010011 && (funct3==3'h1 || funct3==3'h5))) ? {27'b0,instruction[24:20]} :
+            (is_I_format) ? {{20{instruction[31]}},instruction[31:20]} :
             (is_J_format) ? {{11{instruction[31]}},instruction[31],instruction[19:12],instruction[20],instruction[30:21],1'b0}:
             (is_S_format) ? {{20{instruction[31]}},instruction[31:25],instruction[11:7]} :
             (is_B_format) ? {{19{instruction[31]}},instruction[31],instruction[7],instruction[30:25],instruction[11:8],1'b0} :
