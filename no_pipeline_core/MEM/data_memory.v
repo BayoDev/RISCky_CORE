@@ -4,7 +4,7 @@ module data_memory
     parameter XLEN = 32,
     parameter uart_rx_data = 'h650,
     parameter uart_rx_ready = 'h660,
-    parameter uart_tx_addr = 'h680
+    parameter uart_tx_addr = 'h0680
 )
 (
 
@@ -20,24 +20,45 @@ module data_memory
     input [2:0]         word_size,
 
     output reg [7:0] uart_tx_out,
-    output  reg     uart_tx_ready
+    output  reg     uart_tx_ready,
 
+    output reg is_special
 );
 
 // (* syn_ramstyle = "block_ram" *) 
+`ifdef SIMULATION
 reg [7:0] memory [8191:0];
+`else
+reg [7:0] memory [1023:0];
+`endif 
+
+// wire [31:0] sp_do;
+// SP#(
+//     .BIT_WIDTH(32), 
+//     .RESET_MODE("ASYNC")
+// )(
+//     .DO(sp_do),
+//     .DI(data_in),
+//     .AD(address),
+//     .RESET(rst),
+//     .WRE(write_enable),
+//     .BLKSEL({3'b000}),
+// );
 
 integer i;
 initial begin
-    for (i = 0; i < 8192; i = i + 1) begin
+    uart_tx_out <= 'b0;
+    for (i = 0; i < 1023; i = i + 1) begin
         memory[i] = {XLEN{1'b0}};
     end
 end
+
+`ifdef SIMULATION
 initial begin
     $readmemh("./software_tests/out/test_data.hex", memory,0);
 end
+`endif
 
-reg is_special;
 
 // do this better
 always @(posedge clk) begin

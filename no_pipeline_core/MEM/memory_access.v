@@ -29,8 +29,10 @@ module memory_access
 
     // UART
 
-    output reg [7:0] uart_tx_out,
-    output  reg     uart_tx_ready
+    output  [7:0] uart_tx_out,
+    output      uart_tx_ready,
+
+    output is_special
 
 );
 
@@ -64,10 +66,12 @@ mem(
     .data_in(write_data),
     .write_enable(mem_write),
 
-    .word_size(funct3_prop_in)
+    .word_size(funct3_prop_in),
 
-    // .uart_tx_out(uart_tx_out),
-    // .uart_tx_ready(uart_tx_ready)
+    .uart_tx_out(uart_tx_out),
+    .uart_tx_ready(uart_tx_ready),
+
+    .is_special(is_special)
 
 );
 

@@ -35,3 +35,9 @@ Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-
 - https://riscv.github.io/riscv-isa-manual/snapshot/unprivileged/
 - https://riscv.github.io/riscv-isa-manual/snapshot/privileged/
 - https://www.fpga4fun.com/SD1.html
+- https://electrobinary.blogspot.com/2020/06/control-and-status-registers-csr.html
+- https://electrobinary.blogspot.com/p/verilog.html
+
+
+- https://github.com/nand2mario/nestang/issues/2
+- https://github.com/trabucayre/openFPGALoader/issues/300

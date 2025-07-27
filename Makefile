@@ -12,7 +12,7 @@ full_compile: synth
 create_dir:
 	mkdir -p out/
 
-.PHONY: clean sim synth trace pack load flash tests
+.PHONY: clean sim synth trace pack load flash tests load-standalone
 
 clean:
 	rm -r out/
@@ -26,14 +26,16 @@ trace: synth
 pack: trace
 	gowin_pack -d $(DEVICE) -o ./out/post_pack.fs ./out/post_trace.json
 
-load: pack
+load: pack load-standalone
+
+load-standalone:
 	sudo openFPGALoader -b $(BOARD) ./out/post_pack.fs
 
 flash:
-	sudo openFPGALoader -b $(BOARD) ./out/post_pack.fs -f
+	sudo openFPGALoader -b $(BOARD) ./out/post_pack.fs -f 
 
 sim: iverilog
 	vvp $(SIMULATION_OUT)
 
 iverilog:
-	iverilog -o $(SIMULATION_OUT) $(TARGET_SIMUL)
+	iverilog -DSIMULATION -o $(SIMULATION_OUT) $(TARGET_SIMUL)

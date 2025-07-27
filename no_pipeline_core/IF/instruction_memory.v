@@ -10,28 +10,53 @@ module instruction_memory
     output [31:0]      data_out
 );
 
-// reg [31:0] memory [128:0]
 
-// (* syn_ramstyle = "block_ram" *) 
-reg [31:0] memory [4095:0];
+`ifdef SIMULATION
+
+reg [31:0] memory [8191:0];
+
 
 integer i;
 initial begin
-    for (i = 0; i < 512; i = i + 1) begin
+    for (i = 0; i < 8192; i = i + 1) begin
         memory[i] = 32'b0;
     end
-end
 
-initial begin
     $readmemh("./software_tests/out/test_code.hex", memory,0);
 end
-
-// always @(posedge clk) begin
-//     data_out <= memory[address];
-// end
 
 // I do the shifting because the memory should be byte-addressed in theory
 assign data_out = memory[address>>2];
 
+`else
+
+
+reg [31:0] memory [63:0];
+integer i;
+initial begin
+    // for (i = 0; i < 64; i = i + 1) begin
+    //     memory[i] = 32'b0;
+    // end
+    memory[0] = 'h06100293;
+    memory[1] = 'h68000513;
+    memory[2] = 'h00550023;
+    memory[3] = 'hff5ff06f;
+end
+
+assign data_out = memory[address>>2];
+
+// wire [31:0] sp_do;
+// SP#(
+//     .BIT_WIDTH(32), 
+//     .RESET_MODE("ASYNC"),
+//     .INIT_RAM_00(256'h061002936800051300550023ff5ff06f)
+// )
+// block_sram
+// (
+//     .DO(data_out),
+//     .AD(address),
+//     .RESET(rst)
+// );
+`endif 
 
 endmodule

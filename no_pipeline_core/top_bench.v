@@ -5,7 +5,7 @@ module top_bench
     parameter XLEN = 32
 )
 (
-	input                        clk,
+	input                        in_clk,
     input                        rst,
 	input                        uart_rx,
 	output                       uart_tx,
@@ -13,10 +13,34 @@ module top_bench
     output leddington
 );
 
+reg [23:0] counter;
+
+// Counter width calculation:
+// 2^24 = 16,777,216 > 13,500,000
+// So 24 bits is sufficient
+
+always @(posedge in_clk or negedge rst) begin
+    if (!rst) begin
+        counter <= 24'd0;
+        clk <= 1'b0;
+    end
+    else begin
+        if (counter == 24'd13_499_999) begin
+            counter <= 24'd0;
+            clk <= ~clk;  // Toggle the output clock
+        end
+        else begin
+            counter <= counter + 24'd1;
+        end
+    end
+end
+
 // reg clk,rst;
 // always #5 clk = ~clk; 
 
-assign leddington = rst;
+// assign leddington = rst;
+// assign leddington = tx_data[0];
+assign leddington = clk;
 
 integer i;
 
@@ -104,6 +128,8 @@ wire [XLEN-1:0]     id_imm_value_out;
 wire [2:0]   id_funct3_prop_out;
 wire                id_is_link_and_jump_out;
 wire                id_is_link_and_jump_reg_out;
+wire                id_is_lui_out;
+wire                id_is_auipc_out;
 
 // EX
 
@@ -120,6 +146,8 @@ wire [XLEN-1:0]     ex_imm_value_in;
 wire [2:0]          ex_funct3_prop_in;
 wire                ex_is_link_and_jump_in;
 wire                ex_is_link_and_jump_reg_in;
+wire                ex_is_lui_in;
+wire                ex_is_auipc_in;
 
 // output
 wire [XLEN-1:0]     ex_result_out;
@@ -211,7 +239,10 @@ id_phase(
 
     .funct3_prop_out(id_funct3_prop_out),
     .is_link_and_jump(id_is_link_and_jump_out),
-    .is_link_and_jump_reg(id_is_link_and_jump_reg_out)
+    .is_link_and_jump_reg(id_is_link_and_jump_reg_out),
+
+    .is_lui(id_is_lui_out),
+    .is_auipc(id_is_auipc_out)
 );
 // TODO: this is very messed up, this should be propagated through the ex phase
 assign id_write_reg_dest_in = id_write_reg_dest_out;
@@ -227,6 +258,9 @@ assign ex_imm_value_in = id_imm_value_out;
 assign ex_funct3_prop_in = id_funct3_prop_out;
 assign ex_is_link_and_jump_in = id_is_link_and_jump_out;
 assign ex_is_link_and_jump_reg_in = id_is_link_and_jump_reg_out;
+assign ex_is_lui_in = id_is_lui_out;
+assign ex_is_auipc_in = id_is_auipc_out;
+
 
 execution 
 #(
@@ -248,6 +282,9 @@ ex_phase(
 
     .is_link_and_jump(ex_is_link_and_jump_in),
     .is_link_and_jump_reg(ex_is_link_and_jump_reg_in),
+
+    .is_lui(ex_is_lui_in),
+    .is_auipc(ex_is_auipc_in),
 
     .res(ex_result_out),
     .zero(ex_zero_out),
@@ -294,10 +331,12 @@ mem_phase(
     .is_valid_branch(mem_is_valid_branch_out),
     .dest_reg_prog_out(mem_dest_reg_prog_out),
     .memory_res(mem_memory_res_out),
-    .original_value(mem_original_value_out)
+    .original_value(mem_original_value_out),
 
-    // .uart_tx_out(tx_data),
-    // .uart_tx_ready(tx_data_valid)
+    .uart_tx_out(tx_data),
+    .uart_tx_ready(tx_data_valid),
+
+    .is_special(leddington2)
 );
 // TODO: change this to go through barrier with pipeline
 // assign id_write_reg_dest_in = mem_dest_reg_prog_out;
