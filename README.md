@@ -1,8 +1,40 @@
 # RISCky_CORE
 
-## ROADMAP
+## Overview
 
-0. - [ ] RV32I
+Verilog implementation of a RISC-V core. At the current state the core implements all of the basic RV32I instructions in a non-pipelined fashion.
+
+The current core is already divided into the five major execution phases:
+
+- (**IF**)  Instruction Fetch
+- (**ID**)  Instruction Decoding
+- (**EX**)  Execute
+- (**MEM**) Memory
+- (**WB**)  Write BACK
+
+Each phase implementation can be found inside the respective folder.
+This structure aims to for an easier switch to a pipelined core later down the line.
+
+
+
+### Result of simulation on test program
+```bash
+RV32I ISA Test Program
+
+Testing Register-Register Ops... ############## PASSED
+
+Testing Register-Immediate Ops... ########### PASSED
+
+Testing load/store Operations... ##### PASSED
+
+Testing Control Flow... ######## PASSED
+
+Testing LUI/AUIPC Operations... ## PASSED
+```
+
+## Roadmap
+
+0. - [x] RV32I
 2. - [ ] Zicsr
 3. - [ ] Zifencei
 4. - [ ] RV32IM
