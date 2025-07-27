@@ -1,8 +1,8 @@
-# RISCky_CORE
+# <div align="center"> RISCky_CORE </div>
 
 ## Overview
 
-Verilog implementation of a RISC-V core. At the current state the core implements all of the basic RV32I instructions in a non-pipelined fashion.
+Verilog implementation of a RISC-V core for FPGA. At the current state the core implements all of the basic RV32I instructions in a non-pipelined fashion.
 
 The current core is already divided into the five major execution phases:
 
@@ -12,7 +12,7 @@ The current core is already divided into the five major execution phases:
 - (**MEM**) Memory
 - (**WB**)  Write BACK
 
-Each phase implementation can be found inside the respective folder.
+Each phase's implementation can be found inside the respective folder.
 This structure aims to for an easier switch to a pipelined core later down the line.
 
 
@@ -42,11 +42,16 @@ Testing LUI/AUIPC Operations... ## PASSED
 6. - [ ] RV32IMAF/D (RV64G)
 8. - [ ] RV32IMADC (RV64GC)
 
-# Toolchain
+## Hardware
 
-Toolchain based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-build)
+The hardware target is an FPGA TangPrimer 20k, but developement is mainly focused towards working simulation at the moment. 
 
-# Sources
+## Toolchain
+
+- For FPGA building toolchain is based on the [OSS-CAD-SUITE](https://github.com/YosysHQ/oss-cad-suite-build)
+- For simulation [iverilog](https://github.com/steveicarus/iverilog) is used
+
+## Sources
 
 - https://github.com/sipeed/sipeed_wiki/tree/main/docs/hardware/en/tang/tang-primer-20k
 - https://github.com/sipeed/TangPrimer-20K-example
